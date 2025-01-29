@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 
 # 描画方法を設定 (Trueなら軌跡、Falseなら丸)
-draw_trajectory = True
+draw_trajectory = False
 
 # 事前に定義した10個のカスタムカラー（BGR形式）
 colors = [
@@ -62,23 +62,24 @@ for frame_idx in range(total_frames):
                 start_point = (int(person_data.iloc[i]['scaled_x']), int(person_data.iloc[i]['scaled_y']))
                 end_point = (int(person_data.iloc[i + 1]['scaled_x']), int(person_data.iloc[i + 1]['scaled_y']))
                 cv2.line(frame, start_point, end_point, color, 2)  # カスタムカラーで軌跡を描画
-                
-            # シーンの最後の位置にperson_idを表示
+
+            # シーンの最後の位置にperson_idと座標を表示
             if not person_data.empty:
                 last_position = (int(person_data.iloc[-1]['scaled_x']), int(person_data.iloc[-1]['scaled_y']))
-                cv2.putText(frame, person_id, (last_position[0] + 5, last_position[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv2.LINE_AA)
+                cv2.putText(frame, person_id, (last_position[0] + 5, last_position[1] - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv2.LINE_AA)
+                cv2.putText(frame, f"({last_position[0]}, {last_position[1]})", (last_position[0] + 5, last_position[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv2.LINE_AA)
         else:
             # 現在位置を丸で描画
             if not person_data.empty:
                 current_position = (int(person_data.iloc[-1]['scaled_x']), int(person_data.iloc[-1]['scaled_y']))
                 cv2.circle(frame, current_position, 5, color, -1)  # カスタムカラーで現在位置を描画
-                # person_idの表示
-                cv2.putText(frame, person_id, (current_position[0] + 5, current_position[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv2.LINE_AA)
+                cv2.putText(frame, person_id, (current_position[0] + 5, current_position[1] - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv2.LINE_AA)
+                cv2.putText(frame, f"({current_position[0]}, {current_position[1]})", (current_position[0] + 5, current_position[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, 1, cv2.LINE_AA)
 
     # タイムスタンプの追加
     timestamp_str = frame_time.strftime('%Y-%m-%d %H:%M:%S')
     cv2.putText(frame, timestamp_str, (width - 250, height - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, timestamp_color, 1, cv2.LINE_AA)
-    
+
     out.write(frame)
 
 out.release()
